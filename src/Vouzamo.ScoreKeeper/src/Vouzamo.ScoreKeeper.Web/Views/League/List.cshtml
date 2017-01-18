@@ -1,0 +1,8 @@
+﻿@model IEnumerable<League>
+
+<ul>
+    @foreach (var league in Model)
+    {
+        <li>@Html.ActionLink(league.Name, "Get", new { id = league.Id })</li>
+    }
+</ul>
