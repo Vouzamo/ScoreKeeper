@@ -1,8 +1,15 @@
 ﻿@model IEnumerable<League>
 
-<ul>
+@{
+    Layout = "_Layout";
+}
+
+<div class="row">
     @foreach (var league in Model)
     {
-        <li>@Html.ActionLink(league.Name, "Get", new { id = league.Id })</li>
+        <div class="col-md-4">
+            <h1>@league.Name</h1>
+            @Html.ActionLink("View", "Get", new { id = league.Id }, new { @class = "btn btn-primary" })
+        </div>
     }
-</ul>
+</div>

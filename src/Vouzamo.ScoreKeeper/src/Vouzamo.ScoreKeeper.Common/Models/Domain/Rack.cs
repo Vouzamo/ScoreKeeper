@@ -1,5 +1,4 @@
 ﻿using System;
-using Vouzamo.ScoreKeeper.Common.Models.Infrastructure;
 
 namespace Vouzamo.ScoreKeeper.Common.Models.Domain
 {
@@ -7,5 +6,19 @@ namespace Vouzamo.ScoreKeeper.Common.Models.Domain
     {
         public int HomeScore { get; set; }
         public int AwayScore { get; set; }
+
+        public Guid GameId { get; set; }
+
+        protected Rack()
+        {
+            
+        }
+
+        public Rack(int homeScore, int awayScore, Game game) : this()
+        {
+            HomeScore = homeScore;
+            AwayScore = awayScore;
+            GameId = game.Id;
+        }
     }
 }

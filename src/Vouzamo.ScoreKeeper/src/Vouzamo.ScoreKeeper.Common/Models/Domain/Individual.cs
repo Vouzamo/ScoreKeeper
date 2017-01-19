@@ -1,5 +1,4 @@
 ﻿using System;
-using Vouzamo.ScoreKeeper.Common.Models.Infrastructure;
 
 namespace Vouzamo.ScoreKeeper.Common.Models.Domain
 {
@@ -7,5 +6,18 @@ namespace Vouzamo.ScoreKeeper.Common.Models.Domain
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
+
+        public string FullName => $"{FirstName} {LastName}";
+
+        protected Individual()
+        {
+            
+        }
+
+        public Individual(string firstName, string lastName) : this()
+        {
+            FirstName = firstName;
+            LastName = lastName;
+        }
     }
 }

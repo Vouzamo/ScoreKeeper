@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using Vouzamo.ScoreKeeper.Common.Models.Infrastructure;
 
 namespace Vouzamo.ScoreKeeper.Common.Models.Domain
 {
@@ -8,11 +6,14 @@ namespace Vouzamo.ScoreKeeper.Common.Models.Domain
     {
         public string Name { get; set; }
 
-        public Collection<Season> Seasons { get; set; }
-
-        public League()
+        protected League()
         {
-            Seasons = new Collection<Season>();
+            
+        }
+
+        public League(string name) : this()
+        {
+            Name = name;
         }
     }
 }

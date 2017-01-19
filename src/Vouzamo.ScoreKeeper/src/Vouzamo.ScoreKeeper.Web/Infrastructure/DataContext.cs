@@ -8,19 +8,23 @@ namespace Vouzamo.ScoreKeeper.Web.Infrastructure
 {
     public class DataContext : DbContext, IRepository<Guid>
     {
-        public DbSet<Fixture> Fixtures { get; set; }
-        public DbSet<Game> Games { get; set; }
-        public DbSet<Handicap> Handicaps { get; set; }
-        public DbSet<Individual> Individuals { get; set; }
-        public DbSet<League> Leagues { get; set; }
-        public DbSet<Rack> Racks { get; set; }
-        public DbSet<Result> Results { get; set; }
-        public DbSet<Season> Seasons { get; set; }
-        public DbSet<Team> Teams { get; set; }
-
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
             
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Fixture>();
+            modelBuilder.Entity<Game>();
+            modelBuilder.Entity<Individual>();
+            modelBuilder.Entity<League>();
+            modelBuilder.Entity<Rack>();
+            modelBuilder.Entity<Season>();
+            modelBuilder.Entity<Team>();
+            modelBuilder.Entity<TeamMember>();
+
+            base.OnModelCreating(modelBuilder);
         }
 
         public IQueryable<T> List<T>() where T : class, IEntity<Guid>
