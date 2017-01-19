@@ -2,7 +2,7 @@
   "name": "ScoreKeeper",
   "private": true,
   "dependencies": {
-    "jquery": "3.1.1" ,
+    "jquery": "3.1.1",
     "bootstrap": "3.1.1"
   }
 }
