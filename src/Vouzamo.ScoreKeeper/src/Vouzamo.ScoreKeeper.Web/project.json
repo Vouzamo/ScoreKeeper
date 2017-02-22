@@ -11,12 +11,14 @@
     "Vouzamo.ScoreKeeper.Common": "1.0.0-*",
     "Vouzamo.ScoreKeeper.Core": "1.0.0-*",
     "Microsoft.AspNetCore.Mvc": "1.0.1",
+    "Microsoft.AspNetCore.Mvc.TagHelpers": "1.0.1",
     "Microsoft.EntityFrameworkCore": "1.0.1",
     "Microsoft.EntityFrameworkCore.SqlServer": "1.0.1",
     "Microsoft.AspNetCore.StaticFiles": "1.0.0",
     "Microsoft.Extensions.Configuration.FileExtensions": "1.0.0",
     "Microsoft.Extensions.Configuration.Json": "1.0.0",
-    "Microsoft.Extensions.Logging.Debug": "1.0.0" 
+    "Microsoft.Extensions.Logging.Debug": "1.0.0",
+    "Patterns.Specification": "1.0.0"
   },
 
   "tools": {

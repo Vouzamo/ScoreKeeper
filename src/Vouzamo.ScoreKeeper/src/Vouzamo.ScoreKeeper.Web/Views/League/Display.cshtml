@@ -1,0 +1,17 @@
+﻿@model League
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h1>@Model.Name</h1>
+    </div>
+</div>
+
+<!-- Seasons -->
+<a asp-controller="Season" asp-action="List" asp-route-leagueId="@Model.Id" class="btn btn-primary">Seasons</a>
+
+<!-- Teams -->
+<a asp-controller="Team" asp-action="List" asp-route-leagueId="@Model.Id" class="btn btn-primary">Teams</a>

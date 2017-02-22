@@ -1,0 +1,28 @@
+﻿@model Seasons
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="row">
+    @if (Model.PagedEnumerable.HasPreviousPage)
+    {
+        <a href="?page=@Model.PagedEnumerable.CurrentPage--" class="btn">Previous</a>
+    }
+    @if (Model.PagedEnumerable.HasNextPage)
+    {
+        <a href="?page=@Model.PagedEnumerable.CurrentPage++" class="btn">Next</a>
+    }
+</div>
+<div class="row">
+    @foreach (var season in Model.PagedEnumerable.Enumerable)
+    {
+        <div class="col-md-4">
+            <h1>@season.Name</h1>
+            <a asp-action="Get" asp-route-id="@season.Id" class="btn btn-primary">Edit</a>
+        </div>
+    }
+</div>
+<div class="row">
+    <a asp-action="Post" asp-route-leagueId="@Model.League.Id" class="btn">Create</a>
+</div>

@@ -13,66 +13,66 @@ namespace Vouzamo.ScoreKeeper.Web.Infrastructure
             // Individual
             var individual = new Individual("John", "Askew");
 
-            if (!context.List<Individual>().Any())
+            if (!context.Set<Individual>().Any())
             {
-                context.Post(individual);
+                context.Set<Individual>().Add(individual);
                 context.SaveChanges();
             }
 
             // League
             var league = new League("Workmen's Hall of Norwood");
 
-            if (!context.List<League>().Any())
+            if (!context.Set<League>().Any())
             {
-                context.Post(league);
+                context.Set<League>().Add(league);
                 context.SaveChanges();
 
                 //Team
-                var team = new Team("My Team", league);
+                var team = new Team("My Team", league.Id);
 
-                if (!context.List<Team>().Any())
+                if (!context.Set<Team>().Any())
                 {
-                    context.Post(team);
+                    context.Set<Team>().Add(team);
                     context.SaveChanges();
 
                     // Team Member
                     var teamMember = new TeamMember(team, individual, 96);
 
-                    if (!context.List<TeamMember>().Any())
+                    if (!context.Set<TeamMember>().Any())
                     {
-                        context.Post(teamMember);
+                        context.Set<TeamMember>().Add(teamMember);
                         context.SaveChanges();
 
                         // Season
-                        var season = new Season(DateTime.Today.Subtract(TimeSpan.FromDays(20)), DateTime.Today.Add(TimeSpan.FromDays(20)), league);
+                        var season = new Season(DateTime.Today.Subtract(TimeSpan.FromDays(20)), DateTime.Today.Add(TimeSpan.FromDays(20)), league.Id);
 
-                        if (!context.List<Season>().Any())
+                        if (!context.Set<Season>().Any())
                         {
-                            context.Post(season);
+                            context.Set<Season>().Add(season);
                             context.SaveChanges();
 
                             // Fixture
-                            var fixture = new Fixture(DateTime.Today, team, team, season);
+                            var fixture = new Fixture(DateTime.Today, team, team, season.Id);
 
-                            if (!context.List<Fixture>().Any())
+                            if (!context.Set<Fixture>().Any())
                             {
-                                context.Post(fixture);
+                                context.Set<Fixture>().Add(fixture);
                                 context.SaveChanges();
 
                                 // Game
-                                var game = new Game(teamMember, teamMember, fixture);
+                                var game = new Game(teamMember, teamMember, fixture.Id);
 
-                                if (!context.List<Game>().Any())
+                                if (!context.Set<Game>().Any())
                                 {
-                                    context.Post(game);
+                                    context.Set<Game>().Add(game);
                                     context.SaveChanges();
 
                                     // Rack
-                                    var rack = new Rack(14, 6, game);
+                                    var rack = new Rack(14, 6, game.Id);
 
-                                    if (!context.List<Rack>().Any())
+                                    if (!context.Set<Rack>().Any())
                                     {
-                                        context.Post(rack);
+                                        context.Set<Rack>().Add(rack);
                                         context.SaveChanges();
                                     }
                                 }

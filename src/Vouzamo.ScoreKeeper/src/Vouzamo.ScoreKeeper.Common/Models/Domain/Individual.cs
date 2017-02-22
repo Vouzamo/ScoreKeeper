@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace Vouzamo.ScoreKeeper.Common.Models.Domain
+﻿namespace Vouzamo.ScoreKeeper.Common.Models.Domain
 {
-    public class Individual : Entity<Guid>
+    public class Individual : AggregateRoot
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
-        public string FullName => $"{FirstName} {LastName}";
+        public string Name => $"{FirstName} {LastName}";
 
         protected Individual()
         {

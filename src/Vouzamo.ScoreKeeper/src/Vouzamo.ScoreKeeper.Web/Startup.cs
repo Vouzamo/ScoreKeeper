@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Vouzamo.ScoreKeeper.Web.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Vouzamo.ScoreKeeper.Common.Interfaces;
+using Vouzamo.ScoreKeeper.Core.Infrastructure;
 
 namespace Vouzamo.ScoreKeeper.Web
 {
@@ -34,6 +31,10 @@ namespace Vouzamo.ScoreKeeper.Web
         {
             services.AddMvc();
             services.AddDbContext<DataContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+            // Dependency Injection
+            services.AddTransient<DbContext, DataContext>();
+            services.AddTransient<IUnitOfWorkContext, UnitOfWorkContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,0 +1,28 @@
+﻿@model League
+
+@{
+    Layout = "_Layout";
+}
+
+<form class="form-horizontal">
+    <div class="form-control">
+        <label asp-for="Name" class="control-label"></label>
+        <input asp-for="Name" />
+    </div>
+    <button type="submit" class="btn btn-primary">Done</button>
+</form>
+
+<form method="post" class="form-horizontal">
+    <!-- Validation -->
+    <div asp-validation-summary="@ValidationSummary.ModelOnly" class="text-danger"></div>
+
+    <!-- Visible -->
+    <div class="form-group" asp-validation-for="Name" asp-validation-success="has-success" asp-validation-warning="has-warning" asp-validation-error="has-error">
+        <label asp-for="Name" class="control-label"></label>
+        <input type="text" asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <!-- Buttons -->
+    <button type="submit" class="btn btn-primary">Done</button>
+</form>

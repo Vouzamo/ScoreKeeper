@@ -2,11 +2,10 @@
 
 namespace Vouzamo.ScoreKeeper.Common.Models.Domain
 {
-    public class Season : Entity<Guid>
+    public class Season : Aggregate
     {
         public DateTime Start { get; set; }
         public DateTime End { get; set; }
-
         public Guid LeagueId { get; set; }
 
         public string Name => $"{Start.Year} / {End.Year}";
@@ -16,11 +15,11 @@ namespace Vouzamo.ScoreKeeper.Common.Models.Domain
             
         }
 
-        public Season(DateTime start, DateTime end, League league) : this()
+        public Season(DateTime start, DateTime end, Guid league) : this()
         {
             Start = start;
             End = end;
-            LeagueId = league.Id;
+            LeagueId = league;
         }
     }
 }

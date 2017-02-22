@@ -1,0 +1,16 @@
+﻿@model Season
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h1>@Model.Name</h1>
+        <p>@Model.Start.ToString("d")</p>
+        <p>@Model.End.ToString("d")</p>
+    </div>
+</div>
+
+<!-- Fixtures -->
+<a asp-controller="Fixture" asp-action="List" asp-route-seasonId="@Model.Id" class="btn btn-primary">Fixtures</a>

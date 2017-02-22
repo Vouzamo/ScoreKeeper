@@ -2,11 +2,11 @@
 
 namespace Vouzamo.ScoreKeeper.Common.Models.Domain
 {
-    public class TeamMember : Entity<Guid>
+    public class TeamMember : Aggregate
     {
-        public Guid TeamId { get; set; }
         public Guid IndividualId { get; set; }
         public int Handicap { get; set; }
+        public Guid TeamId { get; set; }
 
         protected TeamMember()
         {

@@ -1,9 +1,21 @@
-﻿using Vouzamo.ScoreKeeper.Common.Interfaces;
+﻿using System;
+using System.Linq.Expressions;
+using Vouzamo.ScoreKeeper.Common.Interfaces;
 
 namespace Vouzamo.ScoreKeeper.Common.Models
 {
-    public abstract class Entity<T> : IEntity<T>
+    public abstract class Entity : IEntity
     {
-        public T Id { get; set; }
+        public Guid Id { get; set; }
+    }
+
+    public abstract class AggregateRoot : Entity, IAggregateRoot
+    {
+        
+    }
+
+    public abstract class Aggregate : Entity, IAggregate
+    {
+        
     }
 }

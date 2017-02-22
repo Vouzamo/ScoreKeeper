@@ -2,11 +2,10 @@
 
 namespace Vouzamo.ScoreKeeper.Common.Models.Domain
 {
-    public class Rack : Entity<Guid>
+    public class Rack : Aggregate
     {
         public int HomeScore { get; set; }
         public int AwayScore { get; set; }
-
         public Guid GameId { get; set; }
 
         protected Rack()
@@ -14,11 +13,11 @@ namespace Vouzamo.ScoreKeeper.Common.Models.Domain
             
         }
 
-        public Rack(int homeScore, int awayScore, Game game) : this()
+        public Rack(int homeScore, int awayScore, Guid game) : this()
         {
             HomeScore = homeScore;
             AwayScore = awayScore;
-            GameId = game.Id;
+            GameId = game;
         }
     }
 }

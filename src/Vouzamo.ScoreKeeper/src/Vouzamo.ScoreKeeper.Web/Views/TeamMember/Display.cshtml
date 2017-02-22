@@ -1,0 +1,15 @@
+﻿@model Team
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <h1>@Model.Name</h1>
+        <p>@Model.Name</p>
+    </div>
+</div>
+
+<!-- Members -->
+<a asp-controller="TeamMember" asp-action="List" asp-route-teamId="@Model.Id" class="btn btn-primary">Members</a>

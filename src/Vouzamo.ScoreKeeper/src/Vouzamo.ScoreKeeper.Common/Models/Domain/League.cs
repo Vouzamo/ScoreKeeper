@@ -1,8 +1,6 @@
-﻿using System;
-
-namespace Vouzamo.ScoreKeeper.Common.Models.Domain
+﻿namespace Vouzamo.ScoreKeeper.Common.Models.Domain
 {
-    public class League : Entity<Guid>
+    public class League : AggregateRoot
     {
         public string Name { get; set; }
 

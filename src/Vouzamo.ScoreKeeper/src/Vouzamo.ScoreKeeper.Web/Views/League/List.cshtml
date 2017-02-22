@@ -1,15 +1,25 @@
-﻿@model IEnumerable<League>
+﻿@model IPagedEnumerable<League>
 
 @{
     Layout = "_Layout";
 }
 
 <div class="row">
-    @foreach (var league in Model)
+    @if (Model.HasPreviousPage)
+    {
+        <a href="?page=@Model.CurrentPage--" class="btn">Previous</a>
+    }
+    @if (Model.HasNextPage)
+    {
+        <a href="?page=@Model.CurrentPage++" class="btn">Next</a>
+    }
+</div>
+<div class="row">
+    @foreach (var league in Model.Enumerable)
     {
         <div class="col-md-4">
             <h1>@league.Name</h1>
-            @Html.ActionLink("View", "Get", new { id = league.Id }, new { @class = "btn btn-primary" })
+            <a asp-action="Get" asp-route-id="@league.Id" class="btn btn-primary">Edit</a>
         </div>
     }
 </div>

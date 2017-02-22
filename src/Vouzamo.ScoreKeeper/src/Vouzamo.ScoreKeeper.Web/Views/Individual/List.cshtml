@@ -1,0 +1,15 @@
+﻿@model IEnumerable<Individual>
+
+@{
+    Layout = "_Layout";
+}
+
+<div class="row">
+    @foreach (var individual in Model)
+    {
+        <div class="col-md-4">
+            <h1>@individual.Name</h1>
+            @Html.ActionLink("View", "Get", new { id = individual.Id }, new { @class = "btn btn-primary" })
+        </div>
+    }
+</div>

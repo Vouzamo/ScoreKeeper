@@ -2,7 +2,7 @@
 
 namespace Vouzamo.ScoreKeeper.Common.Models.Domain
 {
-    public class Fixture : Entity<Guid>
+    public class Fixture : Aggregate
     {
         public DateTime Date { get; set; }
         public Guid HomeTeamId { get; set; }
@@ -14,12 +14,12 @@ namespace Vouzamo.ScoreKeeper.Common.Models.Domain
             
         }
 
-        public Fixture(DateTime date, Team home, Team away, Season season) : this()
+        public Fixture(DateTime date, Team home, Team away, Guid season) : this()
         {
             Date = date;
             HomeTeamId = home.Id;
             AwayTeamId = away.Id;
-            SeasonId = season.Id;
+            SeasonId = season;
         }
     }
 }
