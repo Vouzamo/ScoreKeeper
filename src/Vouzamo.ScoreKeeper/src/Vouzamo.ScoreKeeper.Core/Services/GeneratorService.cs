@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Vouzamo.ScoreKeeper.Common.Interfaces.Services;
 using Vouzamo.ScoreKeeper.Common.Models.Domain;
@@ -28,17 +29,27 @@ namespace Vouzamo.ScoreKeeper.Core.Services
                 for (var fixtureNumber = 0; fixtureNumber < otherTeams.Count; fixtureNumber++)
                 {
                     // determine fixtures
-                    var tempFixtures = new List<Fixture>
-                    {
-                        new Fixture(fixtureDate, teams.First(), otherTeams.First(), season.Id)
-                    };
+                    var tempFixtures = new List<Fixture>();
 
+                    // first team
+                    var home = teams.First();
+                    var away = otherTeams.First();
+
+                    if (home.Id != Guid.Empty && away.Id != Guid.Empty)
+                    {
+                        tempFixtures.Add(new Fixture(fixtureDate, home, away, season.Id));
+                    }
+
+                    // other teams
                     for (var team = 1; team < otherTeams.Count - 1; team += 2)
                     {
-                        var home = otherTeams.ElementAt(team);
-                        var away = otherTeams.ElementAt(team + 1);
+                        home = otherTeams.ElementAt(team);
+                        away = otherTeams.ElementAt(team + 1);
 
-                        tempFixtures.Add(new Fixture(fixtureDate, home, away, season.Id));
+                        if (home.Id != Guid.Empty && away.Id != Guid.Empty)
+                        {
+                            tempFixtures.Add(new Fixture(fixtureDate, home, away, season.Id));
+                        }
                     }
 
                     if (reverseFixtures)
