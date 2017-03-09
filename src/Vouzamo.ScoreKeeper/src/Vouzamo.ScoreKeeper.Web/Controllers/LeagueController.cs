@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Vouzamo.ScoreKeeper.Common.Interfaces;
+using Vouzamo.ScoreKeeper.Common.Interfaces.Services;
 using Vouzamo.ScoreKeeper.Common.Models.Domain;
+using Vouzamo.ScoreKeeper.Core.Services;
 using Vouzamo.ScoreKeeper.Core.Specifications;
 using Vouzamo.ScoreKeeper.Web.Extensions;
 
@@ -11,20 +15,22 @@ namespace Vouzamo.ScoreKeeper.Web.Controllers
     [Route("api/leagues")]
     public class LeagueController : ApiController<League>
     {
+        private IGeneratorService GeneratorService { get; set; }
+
         private ApiController<Season> LeagueSeasons(Guid leagueId) => Aggregate(new AggregateParentSpecification<Season>(x => x.LeagueId, leagueId));
         private ApiController<Team> LeagueTeams(Guid leagueId) => Aggregate(new AggregateParentSpecification<Team>(x => x.LeagueId, leagueId));
         private ApiController<Fixture> SeasonFixtures(Guid leagueId, Guid seasonId) => LeagueSeasons(leagueId).Aggregate(new AggregateParentSpecification<Fixture>(x => x.SeasonId, seasonId));
         private ApiController<TeamMember> TeamMembers(Guid leagueId, Guid teamId) => LeagueTeams(leagueId).Aggregate(new AggregateParentSpecification<TeamMember>(x => x.TeamId, teamId));
         private ApiController<Game> FixtureGames(Guid leagueId, Guid seasonId, Guid fixtureId) => SeasonFixtures(leagueId, seasonId).Aggregate(new AggregateParentSpecification<Game>(x => x.FixtureId, fixtureId));
 
-        public LeagueController(IUnitOfWorkContext context) : base(context)
+        public LeagueController(IUnitOfWorkContext context, IGeneratorService generatorService) : base(context)
         {
-
+            GeneratorService = generatorService;
         }
 
         public async Task<IActionResult> Test1(IUnitOfWorkContext context, League league)
         {
-            return await context.Run(new CreateTransaction<League>(league)).AsSafe<IActionResult, League>(s => new CreatedResult(s.Id.ToString(), s), e => new BadRequestObjectResult(e));
+            return await context.Run(new CreateTransaction<League>(league)).Handle<IActionResult, League>(s => new CreatedResult(s.Id.ToString(), s), e => new BadRequestObjectResult(e));
         }
 
         public async Task<IActionResult> Test2(IUnitOfWorkContext context, League league)
@@ -40,7 +46,7 @@ namespace Vouzamo.ScoreKeeper.Web.Controllers
                 });
 
             // Convert to an IActionResult (handle Exceptions)
-            }).AsSafe<IActionResult, League>(s => new CreatedResult(s.Id.ToString(), s), e => new BadRequestObjectResult(e));
+            }).Handle<IActionResult, League>(s => new CreatedResult(s.Id.ToString(), s), e => new BadRequestObjectResult(e));
         }
 
         #region Seasons
@@ -73,6 +79,27 @@ namespace Vouzamo.ScoreKeeper.Web.Controllers
         {
             return await LeagueSeasons(leagueId).Delete(id);
         }
+
+        [HttpGet("{leagueId}/seasons/{id}/generate-fixtures")]
+        public async Task<IActionResult> GenerateFixtures(Guid leagueId, Guid id, FixtureType fixtureType = FixtureType.RoundRobin, int numberOfEncounters = 1, bool includeReverseFixtures = true)
+        {
+            var settings = new GenerateFixtureSettings(fixtureType, numberOfEncounters, includeReverseFixtures, DateTime.Now, TimeSpan.FromDays(7));
+
+            return await UnitOfWorkContext.Run(async transaction =>
+            {
+                // Command Scope
+                return await transaction.Run(async command =>
+                {
+                    var teamsSpecification = new AggregateParentSpecification<Team>(x => x.LeagueId, leagueId);
+                    
+                    // Atomic Commands
+                    var season = await command.Get<Season>(id);
+                    var teams = await command.Query(teamsSpecification, 1, int.MaxValue);
+
+                    return GeneratorService.GenerateFixtures(season, teams.Enumerable.ToList(), settings);
+                });
+            }).Handle<IActionResult, IEnumerable<Fixture>>(s => new ObjectResult(s), e => new BadRequestObjectResult(e)); ;
+        }
         #endregion
 
         #region Teams
@@ -86,6 +113,12 @@ namespace Vouzamo.ScoreKeeper.Web.Controllers
         public async Task<IActionResult> GetTeam(Guid leagueId, Guid id)
         {
             return await LeagueTeams(leagueId).Get(id);
+        }
+
+        [HttpPost("{leagueId}/teams")]
+        public async Task<IActionResult> PostTeam(Guid leagueId, [FromBody] Team team)
+        {
+            return await LeagueTeams(leagueId).Post(team);
         }
         #endregion
 

@@ -22,7 +22,7 @@ namespace Vouzamo.ScoreKeeper.Web.Extensions
             }
         }
 
-        public static async Task<TResult> AsSafe<TResult, T>(this Task<T> task, Func<T,TResult> success, Func<Exception, TResult> error) where TResult : IActionResult
+        public static async Task<TResult> Handle<TResult, T>(this Task<T> task, Func<T,TResult> success, Func<Exception, TResult> error) where TResult : IActionResult
         {
             try
             {

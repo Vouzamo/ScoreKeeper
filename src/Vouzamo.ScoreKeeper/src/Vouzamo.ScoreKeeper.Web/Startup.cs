@@ -6,7 +6,9 @@ using Vouzamo.ScoreKeeper.Web.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Vouzamo.ScoreKeeper.Common.Interfaces;
+using Vouzamo.ScoreKeeper.Common.Interfaces.Services;
 using Vouzamo.ScoreKeeper.Core.Infrastructure;
+using Vouzamo.ScoreKeeper.Core.Services;
 
 namespace Vouzamo.ScoreKeeper.Web
 {
@@ -35,6 +37,7 @@ namespace Vouzamo.ScoreKeeper.Web
             // Dependency Injection
             services.AddTransient<DbContext, DataContext>();
             services.AddTransient<IUnitOfWorkContext, UnitOfWorkContext>();
+            services.AddTransient<IGeneratorService, GeneratorService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

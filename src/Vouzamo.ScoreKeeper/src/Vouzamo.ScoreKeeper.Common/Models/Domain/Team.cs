@@ -19,9 +19,6 @@ namespace Vouzamo.ScoreKeeper.Common.Models.Domain
             LeagueId = league;
         }
 
-        public Expression<Func<Team, Guid>> AggregateParentId(League parent)
-        {
-            return x => x.LeagueId;
-        }
+        public static Team Bye => new Team("Bye", Guid.Empty);
     }
 }
