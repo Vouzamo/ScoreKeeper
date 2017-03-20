@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Vouzamo.ScoreKeeper.Common.Interfaces;
 using Vouzamo.ScoreKeeper.Common.Interfaces.Services;
 using Vouzamo.ScoreKeeper.Common.Models.Domain;
+using Vouzamo.ScoreKeeper.Common.Models.View;
+using Vouzamo.ScoreKeeper.Core.Infrastructure;
 using Vouzamo.ScoreKeeper.Core.Services;
 using Vouzamo.ScoreKeeper.Core.Specifications;
 using Vouzamo.ScoreKeeper.Web.Extensions;
@@ -80,25 +82,14 @@ namespace Vouzamo.ScoreKeeper.Web.Controllers
             return await LeagueSeasons(leagueId).Delete(id);
         }
 
-        [HttpGet("{leagueId}/seasons/{id}/generate-fixtures")]
-        public async Task<IActionResult> GenerateFixtures(Guid leagueId, Guid id, FixtureType fixtureType = FixtureType.RoundRobin, int numberOfEncounters = 1, bool includeReverseFixtures = true)
+        [HttpPost("{leagueId}/seasons/{id}/generate-fixtures")]
+        public async Task<IActionResult> GenerateFixtures(Guid leagueId, Guid id, [FromBody] GenerateFixtureSettings settings)
         {
-            var settings = new GenerateFixtureSettings(fixtureType, numberOfEncounters, includeReverseFixtures, DateTime.Now, TimeSpan.FromDays(7));
+            var unitOfWork = new GenerateFixturesUnitOfWork(GeneratorService, settings, leagueId, id);
 
-            return await UnitOfWorkContext.Run(async transaction =>
-            {
-                // Command Scope
-                return await transaction.Run(async command =>
-                {
-                    var teamsSpecification = new AggregateParentSpecification<Team>(x => x.LeagueId, leagueId);
-                    
-                    // Atomic Commands
-                    var season = await command.Get<Season>(id);
-                    var teams = await command.Query(teamsSpecification, 1, int.MaxValue);
+            var task = UnitOfWorkContext.Run(unitOfWork);
 
-                    return GeneratorService.GenerateFixtures(season, teams.Enumerable.ToList(), settings);
-                });
-            }).Handle<IActionResult, IEnumerable<Fixture>>(s => new ObjectResult(s), e => new BadRequestObjectResult(e)); ;
+            return await task.Handle<IActionResult, ServiceModel<IGenerateFixtureSettings, IEnumerable<Fixture>>>(s => new ObjectResult(s), e => new BadRequestObjectResult(e)); ;
         }
         #endregion
 

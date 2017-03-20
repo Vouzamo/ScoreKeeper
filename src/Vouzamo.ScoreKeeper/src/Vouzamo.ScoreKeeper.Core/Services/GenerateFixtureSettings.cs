@@ -5,19 +5,19 @@ namespace Vouzamo.ScoreKeeper.Core.Services
 {
     public class GenerateFixtureSettings : IGenerateFixtureSettings
     {
-        public FixtureType FixtureType { get; protected set; }
-        public int NumberOfEncounters { get; protected set; }
-        public bool IncludeReverseFixtures { get; protected set; }
-        public DateTime Start { get; protected set; }
-        public TimeSpan TimeBetweenFixtures { get; protected set; }
+        public FixtureType FixtureType { get; set; }
+        public int NumberOfEncounters { get; set; }
+        public bool IncludeReverseFixtures { get; set; }
+        public DateTime Start { get; set; }
+        public TimeSpan TimeBetweenFixtures { get; set; }
 
-        public GenerateFixtureSettings(FixtureType fixtureType, int numberOfEncounters, bool includeReverseFixtures, DateTime start, TimeSpan timeBetweenFixtures)
+        public GenerateFixtureSettings()
         {
-            FixtureType = fixtureType;
-            NumberOfEncounters = numberOfEncounters;
-            IncludeReverseFixtures = includeReverseFixtures;
-            Start = start != default(DateTime) ? start : DateTime.Now;
-            TimeBetweenFixtures = timeBetweenFixtures != default(TimeSpan) ? timeBetweenFixtures : TimeSpan.FromDays(7);
+            FixtureType = FixtureType.RoundRobin;
+            NumberOfEncounters = 1;
+            IncludeReverseFixtures = true;
+            Start = DateTime.Now;
+            TimeBetweenFixtures = TimeSpan.FromDays(7);
         }
     }
 }

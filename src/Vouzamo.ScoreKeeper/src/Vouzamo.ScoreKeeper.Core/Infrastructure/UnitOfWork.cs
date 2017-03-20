@@ -1,9 +1,15 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Patterns.Specification.Interfaces;
 using Vouzamo.ScoreKeeper.Common.Interfaces;
+using Vouzamo.ScoreKeeper.Common.Interfaces.Services;
+using Vouzamo.ScoreKeeper.Common.Models.Domain;
+using Vouzamo.ScoreKeeper.Common.Models.View;
+using Vouzamo.ScoreKeeper.Core.Services;
+using Vouzamo.ScoreKeeper.Core.Specifications;
 
 namespace Vouzamo.ScoreKeeper.Core.Infrastructure
 {
@@ -62,6 +68,24 @@ namespace Vouzamo.ScoreKeeper.Core.Infrastructure
             Context = context;
         }
 
+        public async Task<T> Get<T>(Guid id) where T : class, IEntity
+        {
+            return await Task.Run(() =>
+            {
+                return Context.Set<T>().Single(x => x.Id == id);
+            });
+        }
+
+        public async Task<IPagedEnumerable<T>> List<T>(int page, int itemsPerPage) where T : class, IEntity
+        {
+            return await Context.Set<T>().ToPagedEnumerableAsync(page, itemsPerPage);
+        }
+
+        public async Task<IPagedEnumerable<T>> Query<T>(ISpecification<T> specification, int page, int itemsPerPage) where T : class, IEntity
+        {
+            return await Context.Set<T>().Where(x => specification.IsSatisfiedBy(x)).ToPagedEnumerableAsync(page, itemsPerPage);
+        }
+
         public async Task Run(IScoped<IAtomicContext> scoped)
         {
             await Run(scoped.Run);
@@ -108,22 +132,9 @@ namespace Vouzamo.ScoreKeeper.Core.Infrastructure
 
         public async Task Delete<T>(Guid id) where T : class, IEntity
         {
-            var entity = await Get<T>(id);
+            var entity = Context.Set<T>().Single(x => x.Id == id);
 
             await Delete(entity);
-        }
-
-        public async Task<T> Get<T>(Guid id) where T : class, IEntity
-        {
-            return await Task.Run(() =>
-            {
-                return Context.Set<T>().Single(x => x.Id == id);
-            });
-        }
-
-        public async Task<IPagedEnumerable<T>> List<T>(int page, int itemsPerPage) where T : class, IEntity
-        {
-            return await Context.Set<T>().ToPagedEnumerableAsync(page, itemsPerPage);
         }
 
         public async Task<T> Post<T>(T entity) where T : class, IEntity
@@ -149,10 +160,34 @@ namespace Vouzamo.ScoreKeeper.Core.Infrastructure
                 return entity;
             });
         }
+    }
 
-        public async Task<IPagedEnumerable<T>> Query<T>(ISpecification<T> specification, int page, int itemsPerPage) where T : class, IEntity
+    public class GenerateFixturesUnitOfWork : IUnitOfWork<ServiceModel<IGenerateFixtureSettings, IEnumerable<Fixture>>>
+    {
+        private IGeneratorService Service { get; set; }
+        private IGenerateFixtureSettings Settings { get; set; }
+        private Guid LeagueId { get; set; }
+        private Guid SeasonId { get; set; }
+
+        public GenerateFixturesUnitOfWork(IGeneratorService service, IGenerateFixtureSettings settings, Guid leagueId, Guid seasonId)
         {
-            return await Context.Set<T>().Where(x => specification.IsSatisfiedBy(x)).ToPagedEnumerableAsync(page, itemsPerPage);
+            Service = service;
+            Settings = settings;
+            LeagueId = leagueId;
+            SeasonId = seasonId;
+        }
+
+        public async Task<ServiceModel<IGenerateFixtureSettings, IEnumerable<Fixture>>> Run(ITransactionContext context)
+        {
+            var teamsSpecification = new AggregateParentSpecification<Team>(x => x.LeagueId, LeagueId);
+
+            // Atomic Commands
+            var season = await context.Get<Season>(SeasonId);
+            var teams = await context.Query(teamsSpecification, 1, int.MaxValue);
+
+            var result = Service.GenerateFixtures(season, teams.Enumerable.ToList(), Settings);
+
+            return new ServiceModel<IGenerateFixtureSettings, IEnumerable<Fixture>>(Settings, result);
         }
     }
 }

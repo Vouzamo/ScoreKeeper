@@ -29,13 +29,13 @@ namespace Vouzamo.ScoreKeeper.Web.Controllers
         [HttpGet]
         public virtual async Task<IActionResult> List(int page = 1)
         {
-            return await UnitOfWorkContext.Run(t => t.Run(c => c.Query(Specification, page, ItemsPerPage))).HandleGet();
+            return await UnitOfWorkContext.Run(t => t.Query(Specification, page, ItemsPerPage)).HandleGet();
         }
 
         [HttpGet("{id}")]
         public virtual async Task<IActionResult> Get(Guid id)
         {
-            return await UnitOfWorkContext.Run(t => t.Run(c => c.Get<T>(id))).HandleGet();
+            return await UnitOfWorkContext.Run(t => t.Get<T>(id)).HandleGet();
         }
 
         [HttpPost]

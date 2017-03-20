@@ -46,10 +46,6 @@ namespace Vouzamo.ScoreKeeper.Common.Interfaces
         Task<T> Put<T>(Guid id, T entity) where T : class, IEntity;
         Task Delete<T>(T entity) where T : class, IEntity;
         Task Delete<T>(Guid id) where T : class, IEntity;
-
-        Task<T> Get<T>(Guid id) where T : class, IEntity;
-        Task<IPagedEnumerable<T>> List<T>(int page, int itemsPerPage) where T : class, IEntity;
-        Task<IPagedEnumerable<T>> Query<T>(ISpecification<T> specification, int page, int itemsPerPage) where T : class, IEntity;
     }
 
     public interface IAtomicCommand<T> : IScoped<T, IAtomicContext>
@@ -59,7 +55,9 @@ namespace Vouzamo.ScoreKeeper.Common.Interfaces
 
     public interface ITransactionContext : IScopedRunner<IAtomicContext>
     {
-
+        Task<T> Get<T>(Guid id) where T : class, IEntity;
+        Task<IPagedEnumerable<T>> List<T>(int page, int itemsPerPage) where T : class, IEntity;
+        Task<IPagedEnumerable<T>> Query<T>(ISpecification<T> specification, int page, int itemsPerPage) where T : class, IEntity;
     }
 
     public interface IUnitOfWork : IScoped<ITransactionContext>
